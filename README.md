@@ -15,7 +15,7 @@
 
 `Tweet` Schema
 
-```json
+```
 tweet: {
     id: string,           // Auto generate
     body: string,
@@ -35,7 +35,7 @@ tweet: {
 
 #### Response `200`
 
-```javascript
+```
 {
     [tweet1, tweet2, ......]
 }
