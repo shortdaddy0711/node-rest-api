@@ -13,7 +13,7 @@
 
 ## MODEL
 
-`Tweet` Schema
+### `Tweet` Schema
 
 ```
 tweet: {
