@@ -35,7 +35,7 @@ tweet: {
 
 #### Response `200`
 
-```json
+```javascript
 {
     [tweet1, tweet2, ......]
 }
@@ -47,7 +47,7 @@ tweet: {
 
 #### Response `200`
 
-```json
+```
 {
     [tweet1, tweet2, ......]
 }
@@ -59,7 +59,7 @@ tweet: {
 
 #### Response `200`
 
-```json
+```
 {
     tweet
 }
@@ -70,7 +70,7 @@ tweet: {
 #### create a tweet
 
 #### Request
-```json
+```
 {
     body,
     name,
@@ -81,7 +81,7 @@ tweet: {
 
 #### Response `201`
 
-```json
+```
 {
     id
 }
@@ -92,7 +92,7 @@ tweet: {
 #### update a tweet
 
 #### Request
-```json
+```
 {
     body,
 }
@@ -100,7 +100,7 @@ tweet: {
 
 #### Response `200`
 
-```json
+```
 {
     id
 }
