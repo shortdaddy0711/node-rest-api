@@ -21,9 +21,9 @@ tweet: {
     body: string,
     name: string,
     url: string,          // optioal
-	username: string
-    create_at: date,      // Auto generate
-    // modified_at: data,    // Auto generate
+	username: string,
+    createAt: date,       // Auto generate
+    modifiedAt: date,     // Auto generate
 }
 ```
 
