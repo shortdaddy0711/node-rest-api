@@ -1,70 +1,65 @@
-import data from '../data.js';
+import data from '../data/tweets.js';
 
 export default {
-	async getAll() {
-		const tweets = data;
-		if (tweets.length > 0) {
-			return tweets;
-		} else {
-			throw new Error();
-		}
-	},
-
-	async getByUsername(username) {
-		const tweets = data.filter((t) => t.username === username);
-		if (tweets.length > 0) {
-			return tweets;
-		} else {
-			throw new Error();
-		}
-	},
-
-	async getById(id) {
-		const tweet = data.find((t) => t.id === id);
-		if (tweet) {
-			return tweet;
-		} else {
-			throw new Error();
-		}
-	},
-
-	async addTweet(tweet) {
-		const newTweet = {
-			id: Date.now().toString(),
-			createdAt: new Date(),
-			name: tweet.name,
-			username: tweet.username,
-			body: tweet.body,
-			url: tweet.url
-				? tweet.url
-				: 'https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png',
-		};
-		data.unshift(newTweet);
-		return newTweet.id;
-	},
-
-	async updateTweet(id, body) {
-		const tweet = data.find((t) => t.id === id);
-		if (tweet) {
-			tweet.body = body;
-			tweet.modifiedAt = new Date();
-			return tweet;
-		} else {
-			throw new Error();
-		}
-	},
-
-	async deleteTweet(id) {
-		let index;
-		data.forEach((t, i) => {
-			if (t.id === id) {
-				index = i;
+	async getList(req, res) {
+		const { username } = req.query;
+		if (username) {
+			try {
+				const tweets = await data.getByUsername(username);
+				res.status(200).json(tweets);
+			} catch (err) {
+				res.status(404).json({
+					message: `Not found username: ${username}`,
+				});
 			}
-		});
-		if (index) {
-			data.splice(index, 1);
 		} else {
-			throw new Error();
+			try {
+				const tweets = await data.getAll();
+				res.status(200).json(tweets);
+			} catch (err) {
+				res.status(404).json({ message: `No tweets` });
+			}
+		}
+	},
+
+	async getOne(req, res) {
+		const { id } = req.params;
+		try {
+			const tweet = await data.getById(id);
+			res.status(200).json(tweet);
+		} catch (err) {
+			res.status(404).json({ message: `Not found id: ${id}` });
+		}
+	},
+
+	async addTweet(req, res) {
+		const body = req.body;
+		try {
+			const tweet = await data.addTweet(body);
+			res.status(201).json(tweet);
+		} catch (err) {
+			res.status(409).json({ message: `failed to add new tweet` });
+		}
+	},
+
+	async updateTweet(req, res) {
+		const { body } = req.body;
+		const { id } = req.params;
+		try {
+			const tweet = await data.updateTweet(id, body);
+			res.status(200).json(tweet);
+		} catch (err) {
+			res.status(404).json({ message: `Not found id: ${id}` });
+		}
+	},
+
+	async deleteTweet(req, res) {
+		const { id } = req.params;
+		try {
+			await data.deleteTweet(id);
+			res.sendStatus(204);
+		} catch (err) {
+			res.status(404).json({ message: `Not found id: ${id}` });
 		}
 	},
 };

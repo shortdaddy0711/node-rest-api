@@ -47,16 +47,6 @@ export default {
 	},
 
 	async deleteTweet(id) {
-		// let index;
-		// let count = 0;
-		// for (let i = 0; i < data.length; i++) {
-		// 	if (data[i].id === id) {
-		// 		index = i;
-		// 		break;
-		// 	}
-		// 	console.log(count++);
-		// }
-		// data.splice(index, 1);
 		data = data.filter((tweet) => tweet.id !== id);
 	},
 };
