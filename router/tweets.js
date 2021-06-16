@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get('/', controller.getList);
 
-router.get('/:id', controller.getOne);
+router.get('/:id', controller.getById);
 
 router.post('/', controller.addTweet);
 
