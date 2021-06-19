@@ -2,16 +2,16 @@
 
 ## SUMMARY
 
-| no. | Method   | Description            | URL                            |
-| :-: | :------- | :--------------------- | :----------------------------- |
-|  1  | `GET`    | get all tweets         | /api/tweets                    |
-|  2  | `GET`    | get a tweet by id | /api/tweets/:id                |
-|  3  | `GET`    | get all tweets of one user             | /api/tweets?username=:username |
-|  4  | `POST`   | creat a tweet          | /api/tweets                    |
-|  5  | `PUT`    | update a tweet         | /api/tweets/:id                |
-|  6  | `DELETE` | remove a tweet         | /api/tweets/:id                |
+| no. | Method   | Description                | URL                            |
+| :-: | :------- | :------------------------- | :----------------------------- |
+|  1  | `GET`    | get all tweets             | /api/tweets                    |
+|  2  | `GET`    | get a tweet by id          | /api/tweets/:id                |
+|  3  | `GET`    | get all tweets of one user | /api/tweets?username=:username |
+|  4  | `POST`   | creat a tweet              | /api/tweets                    |
+|  5  | `PUT`    | update a tweet             | /api/tweets/:id                |
+|  6  | `DELETE` | remove a tweet             | /api/tweets/:id                |
 
-## MODEL
+## Tweets MODEL
 
 ### `Tweet` Schema
 
@@ -20,14 +20,14 @@ tweet: {
     id: string,           // Auto generate
     body: string,
     name: string,
-    url: string,          // optioal
+    url: string,          // optional
     username: string,
     createAt: date,       // Auto generate
     modifiedAt: date,     // Auto generate
 }
 ```
 
-## APIs
+## Tweets APIs
 
 ### `GET` /api/tweets
 
@@ -70,6 +70,7 @@ tweet: {
 #### create a tweet
 
 #### Request
+
 ```
 {
     body,
@@ -92,6 +93,7 @@ tweet: {
 #### update a tweet
 
 #### Request
+
 ```
 {
     body,
@@ -111,3 +113,80 @@ tweet: {
 #### update a tweet
 
 #### Response `204`
+
+## Auth MODEL
+
+### `Auth` Schema
+
+```
+user: {
+    id: string,           // Auto generate
+    username: string,
+    password: string,
+    name: string,
+    email: string,
+    url: string,          // optional
+}
+```
+
+## Auth APIs
+
+### `POST` /api/Auth/signup
+
+#### register new user
+
+#### Request
+
+```
+{
+    username: string,
+    password: string,
+    name: string,
+    email: string,
+    url: string,          // optional
+}
+```
+
+#### Response `201`
+
+```
+{
+    token,
+    username,
+}
+```
+
+### `POST` /api/Auth/login
+
+#### authentication registered user
+
+#### Request
+
+```
+{
+    username: string,
+    password: string,
+}
+```
+
+#### Response `200`
+
+```
+{
+    token,
+    username,
+}
+```
+
+### `GET` /api/Auth/me
+
+#### validation for exist token in memory
+
+#### Response `200`
+
+```
+{
+    token,
+    username,
+}
+```

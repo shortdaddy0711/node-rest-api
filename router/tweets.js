@@ -5,6 +5,7 @@ import controller from '../controller/tweets.js';
 
 const router = express.Router();
 
+// validation and sanitization for text
 const validateTweet = [
     body('text')
         .trim()
