@@ -139,11 +139,11 @@ user: {
 
 ```
 {
-    username: string,
-    password: string,
-    name: string,
-    email: string,
-    url: string,          // optional
+    username,
+    password,
+    name,
+    email,
+    url,          // optional
 }
 ```
 
@@ -158,14 +158,14 @@ user: {
 
 ### `POST` /api/Auth/login
 
-#### authentication registered user
+#### authentication for registered user
 
 #### Request
 
 ```
 {
-    username: string,
-    password: string,
+    username,
+    password,
 }
 ```
 

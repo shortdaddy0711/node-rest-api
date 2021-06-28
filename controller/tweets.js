@@ -18,15 +18,15 @@ export default {
 	},
 
 	async addTweet(req, res) {
-		const body = req.body;
-		const tweet = await data.addTweet(body);
+		const { body, userId } = req;
+		const tweet = await data.addTweet(body, userId);
 		res.status(201).json(tweet);
 	},
 
 	async updateTweet(req, res) {
-		const { text } = req.body;
+		const { body, userId } = req;
 		const { id } = req.params;
-		const tweet = await data.updateTweet(id, text);
+		const tweet = await data.updateTweet(body, userId, id);
 		tweet
 			? res.status(200).json(tweet)
 			: res.status(404).json({ message: `Not found id: ${id}` });
@@ -34,7 +34,8 @@ export default {
 
 	async deleteTweet(req, res) {
 		const { id } = req.params;
-		await data.deleteTweet(id);
-		res.sendStatus(204);
+		const { userId } = req;
+		const err = await data.deleteTweet(userId, id);
+		err ? res.sendStatus(403) : res.sendStatus(204);
 	},
 };
