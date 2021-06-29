@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import data from '../data/auth.js';
 
 // authorization with bearer using jwt.verify
 
