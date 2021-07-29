@@ -20,7 +20,7 @@ export default {
 	},
 
 	async me(req, res) {
-        const { userId } = req;
+		const { userId } = req;
 		const { username } = await data.findById(userId);
 		username
 			? res.status(200).json({ token: req.token, username })

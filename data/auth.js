@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import { config } from '../config.js';
 
 let userList = [
 	{
@@ -20,12 +21,10 @@ let userList = [
 	},
 ];
 
-const saltRound = 10;
-
-const accessTokenSecret = 'NdRfUjXn';
-const expiration = '12h';
 const tokenGen = (key) => {
-	return jwt.sign({ key }, accessTokenSecret, { expiresIn: expiration });
+	return jwt.sign({ key }, config.jwt.secretKey, {
+		expiresIn: config.jwt.expiresInSec,
+	});
 };
 
 export default {
@@ -46,17 +45,15 @@ export default {
 		const user = await this.findByUsername(username);
 
 		if (user) {
-			return;
+			return null;
 		}
 
 		const newUser = {
 			id: Date.now().toString(),
 			name,
 			username,
-			password: await bcrypt.hash(password, saltRound),
-			url: url
-				? url
-				: 'https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png',
+			password: await bcrypt.hash(password, config.bcrypt.saltRounds),
+			url: url ? url : null,
 		};
 
 		userList.push(newUser);

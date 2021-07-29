@@ -39,6 +39,6 @@ router.post('/login', validateCredential, controller.login);
 router.get('/me', authMiddleware, controller.me);
 
 //for dev
-router.get('/users', controller.users);
+router.get('/users', authMiddleware, controller.users);
 
 export default router;
