@@ -4,35 +4,13 @@ import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import { createServer } from 'http';
-import { Server } from 'socket.io';
 import tweetsRoute from './router/tweets.js';
 import authRoute from './router/auth.js';
 import { config } from './config.js';
+import initSocket from './connection/socket.js';
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
-    cors: {
-        origin: 'http://localhost:3000',
-    }
-});
-
-io.on('connection', (socket) => {
-	console.log('connect');
-
-	// or with emit() and custom event names
-	socket.emit('hola', 'Hey!', { ms: 'jane' }, Buffer.from([4, 3, 3, 1]));
-
-	// handle the event sent with socket.send()
-	socket.on('message', (data) => {
-		console.log(data);
-	});
-
-	// handle the event sent with socket.emit()
-	socket.on('salutations', (elem1, elem2, elem3) => {
-		console.log(elem1, elem2, elem3);
-	});
-});
 
 app.set('port', config.host.port || 8080);
 
@@ -46,15 +24,30 @@ app.use(helmet());
 app.use('/api/tweets', tweetsRoute);
 app.use('/api/auth', authRoute);
 
-app.use((req, res, next) => {
-	res.sendStatus(404);
-});
+app.use(logErrors);
+app.use(clientErrorHandler);
+app.use(errorHandler);
 
-app.use((err, req, res, next) => {
-	console.error(err);
-	res.sendStatus(500);
-});
+function logErrors(err, req, res, next) {
+	console.error(err.stack);
+	next(err);
+}
+
+function clientErrorHandler(err, req, res, next) {
+	if (req.xhr) {
+		res.status(500).send({ error: 'Something failed!' });
+	} else {
+		next(err);
+	}
+}
+
+function errorHandler(err, req, res, next) {
+	res.status(500);
+	res.render('error', { error: err });
+}
 
 httpServer.listen(app.get('port'), function () {
 	console.log('Express server listening on port ' + app.get('port'));
 });
+
+initSocket(httpServer);

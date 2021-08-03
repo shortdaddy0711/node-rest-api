@@ -1,3 +1,4 @@
+import { getSocketIo } from '../connection/socket.js';
 import data from '../data/tweets.js';
 
 export default {
@@ -21,6 +22,7 @@ export default {
 		const { body, userId } = req;
 		const tweet = await data.addTweet(body, userId);
 		res.status(201).json(tweet);
+		getSocketIo().emit('tweets', tweet);
 	},
 
 	async updateTweet(req, res) {
