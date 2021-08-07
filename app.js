@@ -7,6 +7,7 @@ import tweetsRoute from './router/tweets.js';
 import authRoute from './router/auth.js';
 import { config } from './config.js';
 import { initSocket } from './connection/socket.js';
+import { db } from './db/database.js';
 
 const app = express();
 
@@ -28,6 +29,8 @@ app.use((error, req, res, next) => {
 	console.error(error);
 	res.sendStatus(500);
 });
+
+db.getConnection().then(() => console.log('mysql db connected!'));
 
 const server = app.listen(config.host.port, () => {
 	console.log('Express server listening on port ' + config.host.port);

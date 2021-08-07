@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const checkEnvVar = (key, defaultValue = undefined) => {
-    const value = process.env[key] || defaultValue;
+	const value = process.env[key] || defaultValue;
 	if (!value) {
 		try {
 			throw new Error(`undefined env variable: ${key}`);
@@ -10,7 +10,7 @@ const checkEnvVar = (key, defaultValue = undefined) => {
 			console.error(error.name, ': ', error.message);
 		}
 	}
-    return value;
+	return value;
 };
 
 export const config = {
@@ -23,5 +23,11 @@ export const config = {
 	},
 	host: {
 		port: +checkEnvVar('HOST_PORT', '8080'),
+	},
+	db: {
+		host: checkEnvVar('DB_HOST'),
+		user: checkEnvVar('DB_USER'),
+		database: checkEnvVar('DB_DATABASE'),
+		password: checkEnvVar('DB_PASSWORD'),
 	},
 };

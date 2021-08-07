@@ -1,22 +1,50 @@
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import data from '../data/auth.js';
+import { config } from '../config.js';
+
+const tokenGen = (key) => {
+	return jwt.sign({ key }, config.jwt.secretKey, {
+		expiresIn: config.jwt.expiresInSec,
+	});
+};
 
 export default {
 	async signup(req, res) {
 		const newUser = req.body;
-		const token = await data.addUser(newUser);
-		token
-			? res.status(201).json(token)
+		const hashedPassword = await bcrypt.hash(
+			newUser.password,
+			config.bcrypt.saltRounds
+		);
+		newUser.password = hashedPassword;
+		const newUserId = await data.addUser(newUser);
+		newUserId
+			? res.status(201).json({
+					username: newUser.username,
+					token: tokenGen(newUserId),
+			  })
 			: res
 					.status(401)
 					.json({ message: `${newUser.username} already exists` });
 	},
 
 	async login(req, res) {
-		const authInfo = req.body;
-		const token = await data.authentication(authInfo);
-		token
-			? res.status(200).json(token)
-			: res.status(401).json({ message: 'Invalid username or password' });
+		const { username, password } = req.body;
+
+		const user = await data.findByUsername(username);
+
+		if (!user) {
+			return res.status(401).json({ message: 'Invalid username or password' });
+		}
+
+		const authInfoPassword = await bcrypt.compare(password, user.password);
+
+		if (!authInfoPassword) {
+			return res.status(401).json({ message: 'Invalid username or password' });
+		}
+
+		const token = tokenGen(user.id);
+		return res.status(200).json({username, token});
 	},
 
 	async me(req, res) {
