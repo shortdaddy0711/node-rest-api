@@ -32,13 +32,11 @@ export default {
 		const { username, password } = req.body;
 
 		const user = await data.findByUsername(username);
-
 		if (!user) {
 			return res.status(401).json({ message: 'Invalid username or password' });
 		}
 
 		const authInfoPassword = await bcrypt.compare(password, user.password);
-
 		if (!authInfoPassword) {
 			return res.status(401).json({ message: 'Invalid username or password' });
 		}
