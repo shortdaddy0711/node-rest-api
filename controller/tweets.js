@@ -20,7 +20,7 @@ export default {
 
 	async addTweet(req, res) {
 		const { body, userId } = req;
-		const tweet = await data.addTweet(body, userId);
+		const tweet = await data.addTweet(body.text, userId);
 		res.status(201).json(tweet);
 		getSocketIo().emit('tweets', tweet);
 	},
@@ -32,7 +32,7 @@ export default {
 		return tweet
 			? tweet.userId !== userId
 				? res.sendStatus(403)
-				: res.status(200).json(await data.updateTweet(body, id))
+				: res.status(200).json(await data.updateTweet(body.text, id))
 			: res.status(404).json({ message: 'Tweet not found' });
 	},
 

@@ -27,19 +27,19 @@ export default {
 			.catch((e) => console.log(e));
 	},
 
-	async addTweet(body, userId) {
+	async addTweet(text, userId) {
 		return db
 			.execute(
 				'INSERT INTO tweets (text, createdAt, userId) VALUES (?,?,?)',
-				[body, new Date(), userId]
+				[text, new Date(), userId]
 			)
 			.then((result) => this.getById(result[0].insertId))
 			.catch((e) => console.log(e));
 	},
 
-	async updateTweet(body, id) {
+	async updateTweet(text, id) {
 		return db
-			.execute('UPDATE tweets SET text=? WHERE id=?', [body, id])
+			.execute('UPDATE tweets SET text=? WHERE id=?', [text, id])
 			.then(() => this.getById(id))
 			.catch((e) => console.log(e));
 	},
