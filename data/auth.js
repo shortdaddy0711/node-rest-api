@@ -1,34 +1,66 @@
-import { db } from '../db/database.js';
+import pkg from 'sequelize';
+import { sequelize } from '../db/database.js';
+const { Sequelize, Model, DataTypes } = pkg;
+
+export class User extends Model {}
+
+User.init(
+	{
+		id: {
+			type: DataTypes.UUID,
+			defaultValue: Sequelize.UUIDV1,
+			primaryKey: true,
+			allowNull: false,
+		},
+		username: {
+			type: DataTypes.STRING(36),
+			allowNull: false,
+		},
+		password: {
+			type: DataTypes.STRING(128),
+			allowNull: false,
+		},
+		name: {
+			type: DataTypes.STRING(128),
+			allowNull: false,
+		},
+		email: {
+			type: DataTypes.STRING(128),
+			allowNull: false,
+		},
+		url: {
+			type: DataTypes.TEXT,
+		},
+	},
+	{
+		sequelize,
+		timestamps: false,
+		modelName: 'user',
+	}
+);
 
 export default {
 	async findByUsername(username) {
-		return db
-			.execute('SELECT * FROM users WHERE username=?', [username])
-			.then((result) => result[0][0])
+		return User.findOne({ where: { username } })
+			.then((data) => data)
 			.catch((e) => console.log(e));
 	},
 
 	async getAllUsers() {
-		return db
-			.execute('SELECT * FROM users')
-			.then((result) => result[0])
+		return User.findAll()
+			.then((data) => data)
 			.catch((e) => console.log(e));
 	},
 
 	async findById(id) {
-		return db
-			.execute('SELECT * FROM users WHERE id=?', [id])
-			.then((result) => result[0][0])
+		return User.findByPk(id)
+			.then((data) => data)
 			.catch((e) => console.log(e));
 	},
 
-	async addUser({ username, password, name, email, url }) {
-		return db
-			.execute(
-				'INSERT INTO users (username, password, name, email, url) VALUES (?,?,?,?,?)',
-				[username, password, name, email, url]
-			)
-			.then((result) => result[0].insertId)
+	async addUser(user) {
+		return User.create(user)
+			.then((data) => data)
 			.catch((e) => console.log(e));
 	},
 };

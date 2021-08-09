@@ -33,16 +33,20 @@ export default {
 
 		const user = await data.findByUsername(username);
 		if (!user) {
-			return res.status(401).json({ message: 'Invalid username or password' });
+			return res
+				.status(401)
+				.json({ message: 'Invalid username or password' });
 		}
 
 		const authInfoPassword = await bcrypt.compare(password, user.password);
 		if (!authInfoPassword) {
-			return res.status(401).json({ message: 'Invalid username or password' });
+			return res
+				.status(401)
+				.json({ message: 'Invalid username or password' });
 		}
 
 		const token = tokenGen(user.id);
-		return res.status(200).json({username, token});
+		return res.status(200).json({ username, token });
 	},
 
 	async me(req, res) {
