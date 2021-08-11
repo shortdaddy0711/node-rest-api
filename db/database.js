@@ -1,11 +1,16 @@
-// import mysql from 'mysql2';
-import Sequelize from 'sequelize';
+import { MongoClient } from 'mongodb';
 import { config } from '../config.js';
 
-const { host, user, database, password } = config.db;
+const { host } = config.db;
 
-export const sequelize = new Sequelize(database, user, password, {
-	host,
-    dialect: 'mysql',
-    logging: false,
-});
+// Connection URL
+const url = host;
+const client = new MongoClient(url);
+
+export async function connectDB() {
+	return await client.connect();
+}
+
+export function getDb(dbName) {
+	return client.db(dbName);
+}

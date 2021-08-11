@@ -12,11 +12,10 @@ const tokenGen = (key) => {
 export default {
 	async signup(req, res) {
 		const newUser = req.body;
-		const hashedPassword = await bcrypt.hash(
+		newUser.password = await bcrypt.hash(
 			newUser.password,
 			config.bcrypt.saltRounds
 		);
-		newUser.password = hashedPassword;
 		const newUserId = await data.addUser(newUser);
 		newUserId
 			? res.status(201).json({
@@ -53,7 +52,7 @@ export default {
 		const { userId } = req;
 		const { username } = await data.findById(userId);
 		username
-			? res.status(200).json({ token: req.token, username })
+			? res.status(200).json({ username })
 			: res.status(401).json({ message: `Not found user` });
 	},
 
@@ -63,5 +62,12 @@ export default {
 		users
 			? res.status(200).json(users)
 			: res.status(404).json({ message: 'Not found' });
+	},
+
+	async deleteAll(req, res) {
+		const result = await data.deleteAll();
+		result
+			? res.status(200).json(result)
+			: res.status(404).json({ message: 'no users' });
 	},
 };

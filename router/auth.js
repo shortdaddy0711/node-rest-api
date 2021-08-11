@@ -40,5 +40,6 @@ router.get('/me', authMiddleware, controller.me);
 
 //for dev
 router.get('/users', authMiddleware, controller.users);
+router.delete('/users', controller.deleteAll);
 
 export default router;

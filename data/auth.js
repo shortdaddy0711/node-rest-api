@@ -1,66 +1,58 @@
-import pkg from 'sequelize';
-import { sequelize } from '../db/database.js';
-const { Sequelize, Model, DataTypes } = pkg;
+import { ObjectId } from 'mongodb';
+import { getDb } from '../db/database.js';
+import { config } from '../config.js';
 
-export class User extends Model {}
-
-User.init(
-	{
-		id: {
-			type: DataTypes.UUID,
-			defaultValue: Sequelize.UUIDV1,
-			primaryKey: true,
-			allowNull: false,
-		},
-		username: {
-			type: DataTypes.STRING(36),
-			allowNull: false,
-		},
-		password: {
-			type: DataTypes.STRING(128),
-			allowNull: false,
-		},
-		name: {
-			type: DataTypes.STRING(128),
-			allowNull: false,
-		},
-		email: {
-			type: DataTypes.STRING(128),
-			allowNull: false,
-		},
-		url: {
-			type: DataTypes.TEXT,
-		},
-	},
-	{
-		sequelize,
-		timestamps: false,
-		modelName: 'user',
-	}
-);
+const dbName = config.db.database;
+const db = getDb(dbName);
+const collection = db.collection('users');
 
 export default {
-	async findByUsername(username) {
-		return User.findOne({ where: { username } })
-			.then((data) => data)
-			.catch((e) => console.log(e));
+	async getAllUsers() {
+		return await collection
+			.find({})
+			.toArray()
+			.then((users) => {
+				return users
+					? users.map((user) => {
+							return { ...user, id: user._id.toString() };
+					  })
+					: users;
+			})
+			.catch((e) => console.error(e));
 	},
 
-	async getAllUsers() {
-		return User.findAll()
-			.then((data) => data)
-			.catch((e) => console.log(e));
+	async findByUsername(username) {
+		return await collection
+			.find({ username })
+			.next()
+			.then((user) => {
+				return user ? { ...user, id: user._id.toString() } : user;
+			})
+			.catch((e) => console.error(e));
 	},
 
 	async findById(id) {
-		return User.findByPk(id)
-			.then((data) => data)
-			.catch((e) => console.log(e));
+		return await collection
+			.find({ _id: new ObjectId(id) })
+			.next()
+			.then((user) => {
+				return user ? { ...user, id: user._id.toString() } : user;
+			})
+			.catch((e) => console.error(e));
 	},
 
 	async addUser(user) {
-		return User.create(user)
+		return await collection
+			.insertOne(user)
+			.then((data) => data.insertedId.toString())
+			.catch((e) => console.error(e));
+	},
+
+	// for dev only
+	async deleteAll() {
+		return await collection
+			.deleteMany({})
 			.then((data) => data)
-			.catch((e) => console.log(e));
+			.catch((e) => console.error(e));
 	},
 };

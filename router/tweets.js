@@ -25,4 +25,6 @@ router.put('/:id', authMiddleware, validateTweet, controller.updateTweet);
 
 router.delete('/:id', authMiddleware, controller.deleteTweet);
 
+router.delete('/', controller.deleteAll);
+
 export default router;
