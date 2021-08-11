@@ -23,8 +23,7 @@ export default {
 
 	async findByUsername(username) {
 		return await collection
-			.find({ username })
-			.next()
+			.findOne({ username })
 			.then((user) => {
 				return user ? { ...user, id: user._id.toString() } : user;
 			})
@@ -33,8 +32,7 @@ export default {
 
 	async findById(id) {
 		return await collection
-			.find({ _id: new ObjectId(id) })
-			.next()
+			.findOne({ _id: new ObjectId(id) })
 			.then((user) => {
 				return user ? { ...user, id: user._id.toString() } : user;
 			})
