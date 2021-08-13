@@ -12,48 +12,68 @@ const tokenGen = (key) => {
 export default {
 	async signup(req, res) {
 		const newUser = req.body;
-		newUser.password = await bcrypt.hash(
-			newUser.password,
-			config.bcrypt.saltRounds
-		);
-		const newUserId = await data.addUser(newUser);
-		newUserId
-			? res.status(201).json({
+		await data
+			.findByUsername(newUser.username)
+			.then((user) => {
+				if (user)
+					return res.status(401).json({
+						message: `${newUser.username} already exists`,
+					});
+				return newUser;
+			})
+			.then((user) =>
+				bcrypt.hash(user.password, config.bcrypt.saltRounds)
+			)
+			.then((password) => {
+				newUser.password = password;
+				return newUser;
+			})
+			.then((user) => data.addUser(user))
+			.then((userId) => {
+				return res.status(201).json({
 					username: newUser.username,
-					token: tokenGen(newUserId),
-			  })
-			: res
-					.status(401)
-					.json({ message: `${newUser.username} already exists` });
+					token: tokenGen(userId),
+				});
+			})
+			.catch(console.error);
 	},
 
 	async login(req, res) {
 		const { username, password } = req.body;
-
-		const user = await data.findByUsername(username);
-		if (!user) {
-			return res
-				.status(401)
-				.json({ message: 'Invalid username or password' });
-		}
-
-		const authInfoPassword = await bcrypt.compare(password, user.password);
-		if (!authInfoPassword) {
-			return res
-				.status(401)
-				.json({ message: 'Invalid username or password' });
-		}
-
-		const token = tokenGen(user.id);
-		return res.status(200).json({ username, token });
+		await data
+			.findByUsername(username)
+			.then((user) => {
+				if (!user) {
+					return res
+						.status(401)
+						.json({ message: 'Invalid username or password' });
+				}
+				if (!bcrypt.compare(password, user.password)) {
+					return res
+						.status(401)
+						.json({ message: 'Invalid username or password' });
+				}
+				return user;
+			})
+			.then((user) => tokenGen(user.id))
+			.then((token) => {
+				return res.status(200).json({ username, token });
+			})
+			.catch(console.error);
 	},
 
 	async me(req, res) {
 		const { userId } = req;
-		const { username } = await data.findById(userId);
-		username
-			? res.status(200).json({ username })
-			: res.status(401).json({ message: `Not found user` });
+		await data
+			.findById(userId)
+			.then(({ username }) => {
+				username
+					? res.status(200).json({ username })
+					: res
+							.status(401)
+							.json({ message: `Not found user: ${username}` });
+			})
+			.catch(console.error);
 	},
 
 	// for dev

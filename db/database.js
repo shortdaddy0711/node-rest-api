@@ -1,16 +1,21 @@
-import { MongoClient } from 'mongodb';
+import mongoose from 'mongoose';
 import { config } from '../config.js';
 
-const { host } = config.db;
+mongoose.connect(`${config.db.host}${config.db.database}`, {
+	useNewUrlParser: true,
+	useUnifiedTopology: true,
+	useFindAndModify: false,
+});
 
 // Connection URL
-const url = host;
-const client = new MongoClient(url);
-
-export async function connectDB() {
-	return await client.connect();
+export function connectDB() {
+	return mongoose.connection;
 }
 
-export function getDb(dbName) {
-	return client.db(dbName);
+export function idVirtualization(schema) {
+	schema.virtual('id').get(function () {
+		return this._id.toString();
+	});
+	schema.set('toJSON', { virtuals: true });
+	schema.set('toObject', { virtuals: true });
 }

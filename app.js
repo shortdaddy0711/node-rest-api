@@ -32,8 +32,12 @@ app.use((error, req, res, next) => {
 
 connectDB()
 	.then(() => {
+		console.log('MongoDB connected');
 		const server = app.listen(config.host.port, () => {
-			console.log('Express server listening on port ' + config.host.port);
+			console.log(
+				'Listening on port http://localhost:%s',
+				config.host.port
+			);
 		});
 		initSocket(server);
 	})

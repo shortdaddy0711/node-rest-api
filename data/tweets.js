@@ -1,110 +1,69 @@
-import { ObjectId } from 'mongodb';
-import { getDb } from '../db/database.js';
-import { config } from '../config.js';
-import User from './auth.js';
+import mongoose from 'mongoose';
+import { idVirtualization } from '../db/database.js';
+import userData from './auth.js';
+const { Schema } = mongoose;
 
-const dbName = config.db.database;
-const db = getDb(dbName);
-const collection = db.collection('tweets');
+const tweetSchema = new Schema(
+	{
+		text: String,
+		createdAt: Date,
+		userId: String,
+		username: String,
+		name: String,
+		url: String,
+	},
+	{ timestamps: true }
+);
+
+idVirtualization(tweetSchema);
+
+const Tweet = mongoose.model('Tweet', tweetSchema);
 
 export default {
 	async getAll() {
-		return await collection
-			.find({})
-			.sort({ createdAt: -1 })
-			.toArray()
-			.then((tweets) => {
-				return tweets
-					? tweets.map((tweet) => {
-							return { ...tweet, id: tweet._id.toString() };
-					  })
-					: tweets;
-			})
-			.catch((e) => console.log(e));
+		return Tweet.find({}).sort({ createdAt: -1 }).catch(console.error);
 	},
 
 	async getByUsername(username) {
-		return await collection
-			.find({ username })
+		return await Tweet.find({ username })
 			.sort({ createdAt: -1 })
-			.toArray()
-			.then((tweets) => {
-				return tweets
-					? tweets.map((tweet) => {
-							return { ...tweet, id: tweet._id.toString() };
-					  })
-					: tweets;
-			})
-			.catch((e) => console.log(e));
+			.catch(console.error);
 	},
 
 	async getById(id) {
-		return await collection
-			.findOne({ _id: new ObjectId(id) })
-			.then((tweet) => {
-				return tweet ? { ...tweet, id: tweet._id.toString() } : tweet;
-			})
-			.catch((e) => console.log(e));
+		return await Tweet.findById(id).catch(console.error);
 	},
 
 	async addTweet(text, userId) {
-		return await User.findById(userId)
+		return await userData
+			.findById(userId)
 			.then((user) => {
-				return {
+				return new Tweet({
 					text,
 					userId,
 					createdAt: new Date(),
 					name: user.name,
 					username: user.username,
 					url: user.url,
-				};
+				}).save();
 			})
-			.then((newTweet) => collection.insertOne(newTweet))
-			.then((data) => {
-				return this.getById(data.insertedId.toString());
-			})
-			.catch((e) => console.log(e));
+			.catch(console.error);
 	},
 
 	async updateTweet(text, id) {
-		return await collection
-			.findOneAndUpdate(
-				{ _id: new ObjectId(id) },
-				{
-					$set: { text },
-				},
-				{ returnDocument: 'after' }
-			)
-			.then((updatedTweet) => {
-				return updatedTweet.ok === 1
-					? {
-							...updatedTweet.value,
-							id: updatedTweet.value._id.toString(),
-					  }
-					: updatedTweet;
-			})
-			.catch((e) => console.log(e));
+		return await Tweet.findByIdAndUpdate(
+			id,
+			{ text },
+			{ returnDocument: 'after' }
+		).catch(console.error);
 	},
 
 	async deleteTweet(id) {
-		return await collection
-			.findOneAndDelete({ _id: new ObjectId(id) })
-			.then((deletedTweet) => {
-				return deletedTweet.ok === 1
-					? {
-							...deletedTweet.value,
-							id: deletedTweet.value._id.toString(),
-					  }
-					: deletedTweet;
-			})
-			.catch((e) => console.log(e));
+		return await Tweet.findByIdAndDelete(id).catch(console.error);
 	},
 
 	// for dev only
 	async deleteAll() {
-		return await collection
-			.deleteMany({})
-			.then((data) => data)
-			.catch((e) => console.error(e));
+		return await Tweet.deleteMany({}).catch(console.error);
 	},
 };

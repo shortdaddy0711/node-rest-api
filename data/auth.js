@@ -1,56 +1,50 @@
-import { ObjectId } from 'mongodb';
-import { getDb } from '../db/database.js';
-import { config } from '../config.js';
+import mongoose from 'mongoose';
+import { idVirtualization } from '../db/database.js';
+const { Schema } = mongoose;
 
-const dbName = config.db.database;
-const db = getDb(dbName);
-const collection = db.collection('users');
+const userSchema = new Schema({
+	username: String,
+	password: String,
+	name: String,
+	email: String,
+	url: String,
+});
+
+idVirtualization(userSchema);
+
+export const User = mongoose.model('User', userSchema);
 
 export default {
 	async getAllUsers() {
-		return await collection
-			.find({})
-			.toArray()
-			.then((users) => {
-				return users
-					? users.map((user) => {
-							return { ...user, id: user._id.toString() };
-					  })
-					: users;
-			})
-			.catch((e) => console.error(e));
+		return User.find({})
+			.then((users) => users)
+			.catch(console.error);
 	},
 
 	async findByUsername(username) {
-		return await collection
-			.findOne({ username })
-			.then((user) => {
-				return user ? { ...user, id: user._id.toString() } : user;
-			})
-			.catch((e) => console.error(e));
+		return User.findOne({ username })
+			.then((user) => user)
+			.catch(console.error);
 	},
 
 	async findById(id) {
-		return await collection
-			.findOne({ _id: new ObjectId(id) })
-			.then((user) => {
-				return user ? { ...user, id: user._id.toString() } : user;
-			})
-			.catch((e) => console.error(e));
+		return User.findById(id)
+			.then((user) => user)
+			.catch(console.error);
 	},
 
 	async addUser(user) {
-		return await collection
-			.insertOne(user)
-			.then((data) => data.insertedId.toString())
-			.catch((e) => console.error(e));
+		return new User(user)
+			.save()
+			.then((result) => result.id)
+			.catch(console.error);
 	},
 
 	// for dev only
 	async deleteAll() {
-		return await collection
-			.deleteMany({})
-			.then((data) => data)
-			.catch((e) => console.error(e));
+		return User.deleteMany({}, (err, data) => {
+			if (err) return console.error(err);
+			return data;
+		});
 	},
 };
