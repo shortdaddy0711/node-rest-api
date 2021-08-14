@@ -31,8 +31,9 @@ app.use((error, req, res, next) => {
 });
 
 sequelize.sync().then(() => {
-	const server = app.listen(config.host.port, () => {
-		console.log('Express server listening on port ' + config.host.port);
+	console.log('mysql db connected...');
+	const server = app.listen(config.port, () => {
+		console.log('Express server listening on port ' + config.port);
 	});
 	initSocket(server);
 });

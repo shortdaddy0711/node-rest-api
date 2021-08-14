@@ -21,13 +21,14 @@ export const config = {
 	bcrypt: {
 		saltRounds: +checkEnvVar('BCRYPT_SALT_ROUNT', 10),
 	},
-	host: {
-		port: +checkEnvVar('HOST_PORT', '8080'),
-	},
+	port: +checkEnvVar('PORT', '8080'),
 	db: {
 		host: checkEnvVar('DB_HOST'),
 		user: checkEnvVar('DB_USER'),
 		database: checkEnvVar('DB_DATABASE'),
 		password: checkEnvVar('DB_PASSWORD'),
+	},
+	cors: {
+		allowedOrigin: checkEnvVar('CORS_ALLOW_ORIGIN'),
 	},
 };
