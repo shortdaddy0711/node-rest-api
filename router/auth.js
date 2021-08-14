@@ -32,6 +32,8 @@ const validateSignup = [
 	validate,
 ];
 
+router.get('/', () => res.status(200).json({ message: 'Hello World!' }));
+
 router.post('/signup', validateSignup, controller.signup);
 
 router.post('/login', validateCredential, controller.login);
