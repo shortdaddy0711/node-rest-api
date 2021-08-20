@@ -12,20 +12,26 @@ const tokenGen = (key) => {
 export default {
 	async signup(req, res) {
 		const newUser = req.body;
+		const checkDup = await data.findByUsername(newUser.username);
+		if (checkDup) {
+			return res
+				.status(409)
+				.json({ message: 'choose different username' });
+		}
 		const hashedPassword = await bcrypt.hash(
 			newUser.password,
 			config.bcrypt.saltRounds
 		);
 		newUser.password = hashedPassword;
-		const newUserId = await data.addUser(newUser);
-		newUserId
+		const createdUser = await data.addUser(newUser);
+		createdUser
 			? res.status(201).json({
 					username: newUser.username,
-					token: tokenGen(newUserId),
+					token: tokenGen(createdUser.id),
 			  })
-			: res
-					.status(401)
-					.json({ message: `${newUser.username} already exists` });
+			: res.status(401).json({
+					message: `${createdUser.username} already exists`,
+			  });
 	},
 
 	async login(req, res) {
