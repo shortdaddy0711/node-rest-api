@@ -10,12 +10,12 @@ export const csrfCheckMiddleware = (req, res, next) => {
 	if (methodIgnore.includes(req.method)) {
 		return next();
 	}
-	console.log(req.headers);
-	const csrfHeader = req.get('_csrf-token');
+	console.log(req.headers.common);
+	const csrfHeader = req.get('X-CSRF-Token');
 
 	if (!csrfHeader) {
-		console.warn('"_csrf-token" is missing', req.headers.origin);
-		return res.status(403).json({ message: '"_csrf-token" is missing' });
+		console.warn('"X-CSRF-Token" is missing', req.headers.origin);
+		return res.status(403).json({ message: '"X-CSRF-Token" is missing' });
 	}
 
 	validateCsrfToken(csrfHeader)
