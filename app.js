@@ -28,8 +28,8 @@ app.use(helmet());
 app.use(rateLimiter);
 
 app.use(csrfCheckMiddleware);
-app.use('/api/tweets', tweetsRoute);
 app.use('/api/auth', authRoute);
+app.use('/api/tweets', tweetsRoute);
 
 app.use((req, res, next) => {
 	res.sendStatus(404);

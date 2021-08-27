@@ -6,12 +6,11 @@ async function validateCsrfToken(csrfHeader) {
 }
 
 export const csrfCheckMiddleware = (req, res, next) => {
-	const methodsPass = ['GET', 'OPTIONS', 'HEAD'];
-	if (methodsPass.includes(req.method)) {
+	const methodIgnore = ['GET', 'OPTIONS', 'HEAD'];
+	if (methodIgnore.includes(req.method)) {
 		return next();
 	}
-	console.log(req);
-	console.log(req.headers['_csrf-token']);
+
 	const csrfHeader = req.get('_csrf-token');
 
 	if (!csrfHeader) {
