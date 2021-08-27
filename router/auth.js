@@ -32,6 +32,7 @@ const validateSignup = [
 	validate,
 ];
 
+// server health check
 router.get('/', (req, res) => res.status(200).json({ message: 'Hello World!' }));
 
 router.post('/signup', validateSignup, controller.signup);
