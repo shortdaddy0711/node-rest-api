@@ -10,7 +10,7 @@ export const csrfCheckMiddleware = (req, res, next) => {
 	if (methodsPass.includes(req.method)) {
 		return next();
 	}
-	console.log(req.headers);
+	console.log(req);
 	console.log(req.headers['_csrf-token']);
 	const csrfHeader = req.get('_csrf-token');
 
