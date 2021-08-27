@@ -11,7 +11,7 @@ export const csrfCheckMiddleware = (req, res, next) => {
 		return next();
 	}
 	console.log(req.get('_csrf-token'));
-	console.log([...req.headers]);
+	console.log([...Object.entries(req.headers)]);
 	const csrfHeader = req.get('_csrf-token');
 
 	if (!csrfHeader) {
