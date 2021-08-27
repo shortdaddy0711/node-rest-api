@@ -6,6 +6,6 @@ const { host, user, database, password } = config.db;
 
 export const sequelize = new Sequelize(database, user, password, {
 	host,
-    dialect: 'mysql',
-    logging: false,
+	dialect: 'mysql',
+	logging: false,
 });

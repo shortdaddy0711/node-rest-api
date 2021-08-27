@@ -16,7 +16,7 @@ const checkEnvVar = (key, defaultValue = undefined) => {
 export const config = {
 	jwt: {
 		secretKey: checkEnvVar('JWT_SECRET'),
-		expiresInSec: checkEnvVar('JWT_EXPIRATION', '1d'),
+		expiresInSec: +checkEnvVar('JWT_EXPIRATION', 43200),
 	},
 	bcrypt: {
 		saltRounds: +checkEnvVar('BCRYPT_SALT_ROUNT', 10),
@@ -30,5 +30,12 @@ export const config = {
 	},
 	cors: {
 		allowedOrigin: checkEnvVar('CORS_ALLOW_ORIGIN'),
+	},
+	csrf: {
+		plainToken: checkEnvVar('CSRF_SECRET_KEY'),
+	},
+	rateLimit: {
+		windowMs: 60000,
+		maxRequest: 100,
 	},
 };

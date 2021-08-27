@@ -38,7 +38,11 @@ router.post('/signup', validateSignup, controller.signup);
 
 router.post('/login', validateCredential, controller.login);
 
+router.post('/logout', controller.logout);
+
 router.get('/me', authMiddleware, controller.me);
+
+router.get('/csrf-token', controller.csrfToken);
 
 //for dev
 router.get('/users', authMiddleware, controller.users);
