@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
@@ -10,6 +11,13 @@ import { initSocket } from './connection/socket.js';
 import { sequelize } from './db/database.js';
 import { csrfCheckMiddleware } from './middleware/csrf.js';
 import { rateLimiter } from './middleware/rate-limiter.js';
+
+/**
+ * to be installed for API documentation
+ * yamljs
+ * swagger-ui-express
+ * express-openapi-validator
+ */
 
 const app = express();
 
