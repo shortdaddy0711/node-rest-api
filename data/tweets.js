@@ -4,13 +4,13 @@ let data = [
 	{
 		id: '1',
 		text: 'first tweet',
-		createdAt: '2021-05-09T04:20:57.000Z',
+		createdAt: new Date(),
 		userId: '1624663002793',
 	},
 	{
 		id: '2',
 		text: 'second tweet',
-		createdAt: '2021-05-11T04:20:57.000Z',
+		createdAt: new Date(),
 		userId: '1624735777282',
 	},
 ];
